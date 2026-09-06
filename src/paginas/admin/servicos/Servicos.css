@@ -1,0 +1,21 @@
+.th-nome {
+  text-align: left;
+  min-width: 200px;
+}
+.th-especialidade {
+  text-align: left;
+  min-width: 160px;
+}
+.th-acoes {
+  text-align: center;
+  width: 70px;
+}
+.td-nome {
+  font-weight: 600;
+}
+.td-especialidade {
+  color: var(--cor-primaria-hover);
+}
+.td-acoes {
+  text-align: center;
+}

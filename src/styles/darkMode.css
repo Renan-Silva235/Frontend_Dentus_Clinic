@@ -1,0 +1,588 @@
+/*
+ * Overrides de modo escuro — réplica de `Frontend/css/variables.css`
+ * (bloco `html.dark-mode`), `Frontend/css/dentista/tratamentos.css` e
+ * `Frontend/css/recepcionista/agenda-teams.css`.
+ *
+ * Os valores das variáveis de tema (`--cor-fundo`, `--cor-superficie`,
+ * `--cor-card`, `--cor-borda`, `--cor-texto`, `--cor-texto-secundario`) já
+ * trocam sozinhos ao ligar o modo escuro (ver `colors.ts` → `gerarVariaveisCss`).
+ * Este arquivo cobre o que o original original também cobria à parte:
+ * elementos do Bootstrap e classes específicas que usam cor fixa
+ * (`#fff`, branco, cinza) em vez das variáveis — que por isso não mudam
+ * sozinhos só de trocar o valor da variável.
+ */
+
+html.dark-mode body {
+  background-color: var(--cor-fundo);
+}
+
+/* Regra guarda-chuva: força a cor do texto em toda a área de conteúdo
+   principal — muitos componentes fixam `color: var(--cor-primaria)` (correto
+   no claro, onde a cor da marca dobra como cor de texto), mas isso não
+   acompanha a troca de tema sozinho. Mesma técnica do `/Frontend` original. */
+html.dark-mode .app-content,
+html.dark-mode .app-content * {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .app-content {
+  background-color: var(--cor-fundo) !important;
+}
+
+/* ── Elementos genéricos do Bootstrap / navegador ── */
+html.dark-mode input:not([type='checkbox']):not([type='radio']),
+html.dark-mode select,
+html.dark-mode textarea {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode input::placeholder,
+html.dark-mode textarea::placeholder {
+  color: var(--cor-texto-secundario) !important;
+  opacity: 1;
+}
+html.dark-mode input:focus,
+html.dark-mode select:focus,
+html.dark-mode textarea:focus {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+
+html.dark-mode td,
+html.dark-mode th {
+  background-color: var(--cor-superficie) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode thead tr {
+  background-color: var(--cor-card) !important;
+}
+html.dark-mode tbody tr,
+html.dark-mode tbody tr:nth-child(2n),
+html.dark-mode tbody tr:nth-child(odd) {
+  background-color: var(--cor-superficie) !important;
+}
+html.dark-mode tbody tr:hover td,
+html.dark-mode .consultas-table tbody tr:hover td {
+  background-color: var(--cor-card) !important;
+}
+html.dark-mode tbody tr.selecionado td,
+html.dark-mode tbody tr.selected td {
+  background-color: rgba(213, 197, 161, 0.1) !important;
+}
+html.dark-mode .cons-card-meta {
+  border-bottom-color: var(--cor-borda) !important;
+}
+
+html.dark-mode .modal-content {
+  background-color: var(--cor-superficie) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .modal-content,
+html.dark-mode .modal-content * {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .modal-header,
+html.dark-mode .modal-body,
+html.dark-mode .modal-footer {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .modal-content .fw-medium.text-dark,
+html.dark-mode .modal-content .text-dark {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .modal-content .text-muted,
+html.dark-mode .text-muted {
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .modal-title,
+html.dark-mode .modal-text {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .settings-desc {
+  color: var(--cor-texto-secundario) !important;
+}
+
+html.dark-mode .list-group-item {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .list-group-item:hover,
+html.dark-mode .list-group-item:focus {
+  background-color: var(--cor-superficie) !important;
+  color: var(--cor-texto) !important;
+}
+
+html.dark-mode .card {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .text-dark {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .border-dark {
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .bg-white {
+  background-color: var(--cor-card) !important;
+}
+/* O navegador serializa cor hex de inline style como rgb(...), nunca como
+   hex — por isso o seletor casa com o formato computado, não com o literal
+   escrito no código (`#f8f9fa` vira `rgb(248, 249, 250)` no DOM). */
+html.dark-mode [style*='background-color: rgb(248, 249, 250)'] {
+  background-color: var(--cor-card) !important;
+}
+html.dark-mode .input-group-text {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .btn-outline-secondary {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .btn-outline-secondary:hover {
+  background-color: var(--cor-superficie) !important;
+  color: #fff !important;
+}
+
+/* Botões neutros (Cancelar/Fechar/Voltar) sem cor de marca definida —
+   nunca podem ficar com a mesma cor do fundo. Qualquer botão com ALGUM
+   `background`/`background-color` inline (não importa o valor — o navegador
+   sempre serializa hex como rgb(...), nunca mantém o literal `#`) fica de
+   fora, porque já tem cor própria definida. */
+html.dark-mode .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-info):not(.btn-confirmar-finalizar):not([style*='background']) {
+  background-color: #3d3d3d !important;
+  border-color: #5a5a5a !important;
+  color: #e0e0e0 !important;
+}
+html.dark-mode .btn:not(.btn-primary):not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-info):not(.btn-confirmar-finalizar):not([style*='background']):hover {
+  background-color: #4a4a4a !important;
+  color: #fff !important;
+}
+
+/* Botões com cor de marca via inline style (var(--cor-acao-primaria)/var(--cor-perigo))
+   ficam um pouco mais saturados no escuro para contrastar melhor, igual ao original. */
+html.dark-mode [style*='background-color: var(--cor-acao-primaria)'],
+html.dark-mode [style*='background: var(--cor-acao-primaria)'] {
+  background-color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+html.dark-mode [style*='background-color: var(--cor-acao-primaria)']:hover,
+html.dark-mode [style*='background: var(--cor-acao-primaria)']:hover {
+  background-color: #1e40af !important;
+  border-color: #1e40af !important;
+}
+html.dark-mode [style*='background-color: var(--cor-perigo)'],
+html.dark-mode [style*='background: var(--cor-perigo)'] {
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+html.dark-mode [style*='background-color: var(--cor-perigo)']:hover,
+html.dark-mode [style*='background: var(--cor-perigo)']:hover {
+  background-color: #991b1b !important;
+  border-color: #991b1b !important;
+}
+
+/* Alertas Bootstrap */
+html.dark-mode .alert-danger {
+  background-color: rgba(220, 38, 38, 0.15) !important;
+  border-color: rgba(220, 38, 38, 0.35) !important;
+  color: #fca5a5 !important;
+}
+html.dark-mode .alert-warning {
+  background-color: rgba(234, 179, 8, 0.12) !important;
+  border-color: rgba(234, 179, 8, 0.3) !important;
+  color: #fde68a !important;
+}
+html.dark-mode .alert-success {
+  background-color: rgba(34, 197, 94, 0.12) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #86efac !important;
+}
+html.dark-mode .alert-info {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+}
+html.dark-mode .alert:not(.alert-danger):not(.alert-warning):not(.alert-success):not(.alert-info) {
+  background-color: rgba(90, 70, 30, 0.18) !important;
+  border-color: rgba(120, 100, 50, 0.35) !important;
+  color: var(--cor-texto) !important;
+}
+
+/* ── Sidebar ── */
+html.dark-mode .sidebar {
+  background: var(--cor-card) !important;
+  border-right-color: var(--cor-borda) !important;
+}
+html.dark-mode .sidebar-profile {
+  background: var(--cor-superficie) !important;
+}
+html.dark-mode .sidebar-avatar {
+  background: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .sidebar-brand,
+html.dark-mode .sidebar-name {
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .sidebar-role,
+html.dark-mode .sidebar-nav-link {
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .sidebar-nav-link:hover {
+  background: var(--cor-superficie) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .sidebar-nav-link.active {
+  background: var(--cor-primaria) !important;
+  color: #fff !important;
+}
+html.dark-mode .sidebar-divider {
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .sidebar-logout {
+  color: #e07060 !important;
+}
+html.dark-mode .sidebar-logout:hover {
+  background: rgba(192, 57, 43, 0.15) !important;
+}
+
+/* ── Layouts de página / seções compartilhadas ── */
+html.dark-mode .page-container,
+html.dark-mode .filter-bar,
+html.dark-mode .metricas-row,
+html.dark-mode .dash-topbar,
+html.dark-mode .dash-body,
+html.dark-mode .consulta-view,
+html.dark-mode .prontuario-view,
+html.dark-mode .finalizar-consulta-view,
+html.dark-mode .editar-plano-view,
+html.dark-mode .painel-detalhe,
+html.dark-mode .dash-detalhe,
+html.dark-mode .settings-item,
+html.dark-mode .tabela-wrapper,
+html.dark-mode .table-wrapper,
+html.dark-mode .table-container,
+html.dark-mode .tratamentos-layout,
+html.dark-mode .tratamentos-layout-grid,
+html.dark-mode .resumo-card,
+html.dark-mode .tratamentos-resumo-col .resumo-card,
+html.dark-mode .consulta-sidebar,
+html.dark-mode .finalizar-sidebar,
+html.dark-mode .prontuario-sidebar,
+html.dark-mode .consulta-header-row,
+html.dark-mode .prontuario-plano-section,
+html.dark-mode .agenda-busca-resultados,
+html.dark-mode .agenda-filters,
+html.dark-mode .agenda-grid-wrapper,
+html.dark-mode .ap-view,
+html.dark-mode .consulta-odontograma-section,
+html.dark-mode .fab-adicionar,
+html.dark-mode .filter-card-mobile,
+html.dark-mode .odontograma-section,
+html.dark-mode .paciente-card-mobile,
+html.dark-mode .patient-card,
+html.dark-mode .tratamentos-tabs {
+  background-color: var(--cor-superficie) !important;
+  border-color: var(--cor-borda) !important;
+}
+
+html.dark-mode .card-funcionario,
+html.dark-mode .cf-resumo-card,
+html.dark-mode .etapa-card,
+html.dark-mode .metrica-card,
+html.dark-mode .observacoes-card,
+html.dark-mode .prontuario-card,
+html.dark-mode .prontuario-obs-card,
+html.dark-mode .prontuario-info-grid,
+html.dark-mode .consulta-campo-card,
+html.dark-mode .cons-card,
+html.dark-mode .card-mobile,
+html.dark-mode .finalizar-header-row,
+html.dark-mode .finalizar-section,
+html.dark-mode .ap-content,
+html.dark-mode .it-odontograma-section,
+html.dark-mode .it-plano-section,
+html.dark-mode .busca-resultado-item,
+html.dark-mode .dash-detalhe-card,
+html.dark-mode .am-nav,
+html.dark-mode .am-strip-wrap,
+html.dark-mode .am-dentista-bar,
+html.dark-mode .slot-info-modal {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+
+html.dark-mode .tratamentos-lista-wrapper {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .tratamentos-lista-titulo {
+  background-color: #3d3224 !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .tratamento-paciente-item {
+  color: var(--cor-texto) !important;
+  border-bottom-color: var(--cor-borda) !important;
+}
+html.dark-mode .tratamento-paciente-item:nth-child(odd) {
+  background-color: var(--cor-superficie) !important;
+}
+html.dark-mode .tratamento-paciente-item:nth-child(2n) {
+  background-color: var(--cor-card) !important;
+}
+html.dark-mode .tratamento-paciente-item:hover {
+  background-color: rgba(213, 197, 161, 0.12) !important;
+}
+html.dark-mode .tratamento-paciente-item.selected {
+  background-color: rgba(213, 197, 161, 0.22) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .tratamentos-lista-vazia {
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .tratamentos-lista-wrapper::-webkit-scrollbar-track {
+  background: var(--cor-superficie);
+}
+html.dark-mode .tratamentos-lista-wrapper::-webkit-scrollbar-thumb {
+  background: var(--cor-borda);
+}
+
+/* ── Calendário semanal (agenda) ── */
+html.dark-mode .tcal-wrapper {
+  background-color: var(--cor-superficie) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .tcal-head,
+html.dark-mode .tcal-head-gutter,
+html.dark-mode .tcal-toolbar {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .tcal-cell,
+html.dark-mode .tcal-day-col,
+html.dark-mode .tcal-hour-cell,
+html.dark-mode .tcal-time-col,
+html.dark-mode .tcal-head-day {
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .tcal-head-day.today {
+  background-color: rgba(213, 197, 161, 0.06) !important;
+}
+html.dark-mode .tcal-day-col.today {
+  background-color: rgba(213, 197, 161, 0.04) !important;
+}
+html.dark-mode .tcal-notif,
+html.dark-mode .am-notif {
+  background-color: var(--cor-card) !important;
+  border-left-color: var(--cor-primaria) !important;
+}
+html.dark-mode .agenda-mobile {
+  background-color: var(--cor-fundo) !important;
+}
+html.dark-mode .am-slots {
+  background-color: var(--cor-superficie) !important;
+}
+html.dark-mode .am-slot-dot,
+html.dark-mode .filter-input {
+  background-color: var(--cor-borda) !important;
+}
+html.dark-mode .slot-livre {
+  background-color: var(--cor-superficie) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .slot-agendada {
+  background-color: rgba(79, 70, 229, 0.15) !important;
+}
+html.dark-mode .slot-agendada .slot-conteudo,
+html.dark-mode .slot-cancelada .slot-conteudo,
+html.dark-mode .slot-consulta .slot-conteudo,
+html.dark-mode .slot-encerrada .slot-conteudo,
+html.dark-mode .slot-fila .slot-conteudo {
+  background: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .btn-agendar-slot,
+html.dark-mode .am-btn-agendar {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .am-btn-agendar:hover {
+  background-color: var(--cor-primaria) !important;
+  border-color: var(--cor-primaria) !important;
+  color: #fff !important;
+}
+html.dark-mode .rec-dentista-select,
+html.dark-mode .am-dentista-select {
+  color: var(--cor-texto) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .detalhe-label {
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .detalhe-valor {
+  color: var(--cor-texto) !important;
+}
+
+/* ── Legendas / status ── */
+html.dark-mode .legenda-livre {
+  background-color: rgba(22, 160, 133, 0.18) !important;
+}
+html.dark-mode .legenda-agendada {
+  background-color: rgba(79, 70, 229, 0.18) !important;
+}
+html.dark-mode .legenda-fila {
+  background-color: rgba(138, 120, 63, 0.18) !important;
+}
+html.dark-mode .legenda-consulta {
+  background-color: rgba(22, 160, 133, 0.18) !important;
+}
+html.dark-mode .legenda-encerrada {
+  background-color: rgba(85, 85, 85, 0.22) !important;
+}
+html.dark-mode .legenda-cancelada {
+  background-color: rgba(192, 57, 43, 0.18) !important;
+}
+html.dark-mode .status-agendada {
+  background-color: rgba(79, 70, 229, 0.2) !important;
+}
+html.dark-mode .status-em-fila {
+  background-color: rgba(138, 120, 63, 0.2) !important;
+}
+html.dark-mode .status-em-consulta {
+  background-color: rgba(22, 160, 133, 0.2) !important;
+}
+html.dark-mode .status-encerrada,
+html.dark-mode .status-consulta-encerrada {
+  background-color: rgba(85, 85, 85, 0.25) !important;
+  color: var(--cor-texto-secundario) !important;
+}
+html.dark-mode .table-custom tbody tr.fila-chegou td {
+  background-color: rgba(138, 120, 63, 0.2) !important;
+}
+html.dark-mode .status-cancelada {
+  background-color: rgba(192, 57, 43, 0.2) !important;
+}
+html.dark-mode .badge-retorno {
+  background-color: rgba(230, 81, 0, 0.2) !important;
+}
+
+/* ── Badges de cargo ── */
+html.dark-mode .cargo-badge,
+html.dark-mode .badge-cargo {
+  background-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .cargo-badge.secretaria,
+html.dark-mode .badge-cargo.secretaria {
+  background-color: rgba(139, 120, 63, 0.2) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .cargo-badge.dentista,
+html.dark-mode .badge-cargo.dentista {
+  background-color: rgba(30, 80, 150, 0.25) !important;
+  color: #93c5fd !important;
+}
+html.dark-mode .cargo-badge.ti,
+html.dark-mode .badge-cargo.ti-adm {
+  background-color: rgba(100, 50, 140, 0.25) !important;
+  color: #c4b5fd !important;
+}
+html.dark-mode .badge-cargo.default {
+  background-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+
+/* ── Botões de ação neutros (ícone, sem cor de marca) ── */
+html.dark-mode .btn-action,
+html.dark-mode .btn-visualizar,
+html.dark-mode .btn-filter-clear,
+html.dark-mode .btn-nav-dia,
+html.dark-mode .filter-chip,
+html.dark-mode .am-nav-btn,
+html.dark-mode .cf-btn-imprimir,
+html.dark-mode .cf-btn-prontuario,
+html.dark-mode .it-btn-prontuario,
+html.dark-mode .btn-cancelar-finalizar,
+html.dark-mode .btn-voltar,
+html.dark-mode .btn-prontuario-footer,
+html.dark-mode .btn-resumo-editar,
+html.dark-mode .btn-resumo-prontuario,
+html.dark-mode .btn-cancelar-logout {
+  background-color: #3d3d3d !important;
+  border-color: #5a5a5a !important;
+  color: #e0e0e0 !important;
+}
+html.dark-mode .btn-action:hover,
+html.dark-mode .btn-visualizar:hover,
+html.dark-mode .btn-filter-clear:hover,
+html.dark-mode .btn-confirmar-finalizar:hover,
+html.dark-mode .btn-resumo-editar:hover,
+html.dark-mode .btn-resumo-prontuario:hover {
+  background-color: #4a4a4a !important;
+}
+html.dark-mode .filter-chip.active {
+  background-color: var(--cor-primaria) !important;
+  border-color: var(--cor-primaria) !important;
+  color: #fff !important;
+}
+
+html.dark-mode .btn-delete {
+  background-color: #3b1111 !important;
+  border-color: #c0392b !important;
+  color: #f87171 !important;
+}
+html.dark-mode .btn-delete:hover {
+  background-color: #4e1515 !important;
+  border-color: #e74c3c !important;
+  color: #fca5a5 !important;
+}
+html.dark-mode .btn-edit {
+  background-color: var(--cor-card) !important;
+  border-color: #2563eb !important;
+  color: #93c5fd !important;
+}
+html.dark-mode .btn-edit:hover {
+  background-color: #1e3a5f !important;
+  border-color: #3b82f6 !important;
+  color: #bfdbfe !important;
+}
+
+/* ── Diversos ── */
+html.dark-mode .finalizar-aviso-bar {
+  background-color: rgba(40, 120, 180, 0.15) !important;
+  border-color: rgba(40, 120, 180, 0.3) !important;
+}
+html.dark-mode .finalizar-aviso-info {
+  background-color: rgba(180, 130, 10, 0.18) !important;
+  border-color: rgba(180, 130, 10, 0.35) !important;
+}
+html.dark-mode .search-input {
+  background-color: var(--cor-card) !important;
+  border-color: var(--cor-borda) !important;
+  color: var(--cor-texto) !important;
+}
+html.dark-mode .card-avatar,
+html.dark-mode .card-foto,
+html.dark-mode .foto-placeholder,
+html.dark-mode .modal-foto-placeholder,
+html.dark-mode .prontuario-foto-placeholder {
+  background-color: var(--cor-borda) !important;
+  border-color: var(--cor-borda) !important;
+}
+html.dark-mode .progress-bar-wrapper,
+html.dark-mode .resumo-progresso-bar,
+html.dark-mode .pcm-progresso-bar-wrapper {
+  background-color: var(--cor-borda) !important;
+}
+html.dark-mode .dente-consulta.saudavel,
+html.dark-mode .dente-prontuario.saudavel,
+html.dark-mode .dente-finalizar.saudavel {
+  background-color: var(--cor-borda) !important;
+  border-color: var(--cor-borda) !important;
+}

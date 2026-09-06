@@ -1,0 +1,38 @@
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-4);
+  text-align: left;
+}
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-4);
+  background: #fff;
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-sm);
+  transition: transform var(--transicao-padrao);
+}
+
+.settings-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-md);
+}
+
+.settings-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-label {
+  font-weight: 600;
+  color: var(--cor-primaria);
+  font-size: 0.95rem;
+}
+
+.settings-desc {
+  font-size: 0.75rem;
+  color: #888;
+}

@@ -1,0 +1,268 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  margin-bottom: var(--espaco-6);
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 340px;
+  min-width: 200px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-primaria);
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border: 1.5px solid var(--cor-fundo);
+  border-radius: var(--raio-lg);
+  background: #fff;
+  color: var(--cor-primaria);
+  font-size: 0.85rem;
+  transition: border-color var(--transicao-padrao), box-shadow var(--transicao-padrao);
+}
+
+.search-input:focus {
+  outline: 0;
+  border-color: var(--cor-primaria-hover);
+  box-shadow: 0 0 0 3px rgba(var(--cor-primaria-rgb), 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--cor-borda);
+}
+
+.filter-group {
+  display: flex;
+  gap: var(--espaco-2);
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 0.4rem 1rem;
+  border: 1.5px solid var(--cor-fundo);
+  border-radius: 99px;
+  background: #fff;
+  color: var(--cor-primaria-hover);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all var(--transicao-padrao);
+}
+
+.filter-chip:hover {
+  border-color: var(--cor-borda);
+  background: var(--cor-fundo);
+  color: var(--cor-primaria);
+}
+
+.filter-chip.active {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria);
+  color: #fff;
+}
+
+.grid-funcionarios {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espaco-6);
+  margin-bottom: 5rem;
+}
+
+.card-funcionario {
+  background: #fff;
+  border: 1px solid var(--cor-fundo);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao), border-color var(--transicao-padrao);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-funcionario::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cor-primaria), var(--cor-primaria-hover), var(--cor-borda));
+  opacity: 0;
+  transition: opacity var(--transicao-padrao);
+}
+
+.card-funcionario:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-md);
+  border-color: var(--cor-borda);
+}
+
+.card-funcionario:hover::before {
+  opacity: 1;
+}
+
+.card-funcionario:hover .card-avatar {
+  border-color: var(--cor-primaria-hover);
+  background: #f0ede8;
+}
+
+.card-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--raio-md);
+  background: var(--cor-fundo);
+  border: 2px dashed var(--cor-primaria-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--espaco-4);
+}
+
+.card-avatar-icon {
+  font-size: 2rem;
+  color: var(--cor-primaria-hover);
+}
+
+.card-nome {
+  font-family: var(--fonte-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  margin-bottom: 0.15rem;
+  line-height: 1.3;
+}
+
+.cargo-badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: var(--espaco-4);
+}
+
+.cargo-badge.secretaria {
+  background: #fef3e2;
+  color: #b87a2b;
+  border: 1px solid wheat;
+}
+
+.cargo-badge.dentista {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* Nota: o CSS original define ".ti" (não ".administrador"), mas o JS das duas
+ * páginas sempre calcula o tipo como "administrador" — ou seja, no app atual
+ * esta regra NUNCA é aplicada e o badge de administrador fica sem cor de fundo
+ * (bug pré-existente, preservado aqui de propósito — ver
+ * docs/migracao-react/05-progresso.md). */
+.cargo-badge.ti {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+.btn-visualizar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  padding: 0.45rem 1.2rem;
+  border: 1.5px solid var(--cor-fundo);
+  border-radius: var(--raio-md);
+  background: #fff;
+  color: var(--cor-primaria-hover);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all var(--transicao-padrao);
+}
+
+.btn-visualizar:hover {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria);
+  color: #fff;
+}
+
+.btn-add-funcionario {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  padding: 0.75rem 1.5rem;
+  background: var(--cor-primaria);
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(var(--cor-primaria-rgb), 0.3);
+  transition: all var(--transicao-padrao);
+  z-index: 900;
+}
+
+.btn-add-funcionario:hover {
+  background: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(var(--cor-primaria-rgb), 0.35);
+}
+
+@media (max-width: 992px) {
+  .grid-funcionarios {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--espaco-4);
+  }
+}
+
+@media (max-width: 576px) {
+  .grid-funcionarios {
+    grid-template-columns: 1fr;
+    gap: var(--espaco-4);
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-box {
+    max-width: none;
+  }
+  .filter-group {
+    justify-content: center;
+  }
+  .btn-add-funcionario span {
+    display: none;
+  }
+  .btn-add-funcionario {
+    padding: 0.9rem;
+    border-radius: 50%;
+  }
+  .btn-add-funcionario i {
+    font-size: 1.3rem;
+  }
+}

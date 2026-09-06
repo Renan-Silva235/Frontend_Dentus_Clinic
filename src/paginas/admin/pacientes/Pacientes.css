@@ -1,0 +1,59 @@
+.th-nome {
+  text-align: left;
+  min-width: 190px;
+}
+.th-cpf {
+  text-align: left;
+  min-width: 140px;
+}
+.th-celular {
+  text-align: left;
+  min-width: 140px;
+}
+.th-data {
+  text-align: left;
+  min-width: 130px;
+}
+.th-acoes {
+  text-align: center;
+  width: 70px;
+}
+.td-nome {
+  font-weight: 600;
+}
+.td-cpf {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: var(--cor-primaria-hover);
+  letter-spacing: 0.02em;
+}
+.td-celular,
+.td-data {
+  color: var(--cor-primaria-hover);
+}
+.td-data {
+  font-size: 0.8rem;
+}
+.td-acoes {
+  text-align: center;
+}
+.avatar-iniciais {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cor-fundo);
+  color: var(--cor-primaria-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+.card-mobile-detail-pacientes {
+  font-size: 0.74rem;
+  color: var(--cor-primaria-hover);
+  display: flex;
+  gap: var(--espaco-3);
+  flex-wrap: wrap;
+}

@@ -1,0 +1,99 @@
+/*
+ * As custom properties (--cor-primaria, --espaco-4, --raio-md, etc.) NÃO são
+ * definidas aqui. Elas são geradas em runtime a partir de `src/styles/colors.ts`
+ * (função `aplicarTokens()`, chamada em `main.tsx` antes do render) e injetadas
+ * como um <style id="tokens-tema"> no <head>. `colors.ts` é a única fonte —
+ * mudar um valor lá muda a aplicação inteira, sem editar nenhum `.css`.
+ *
+ * Dark mode: toggle da classe `dark-mode` no <html> (TemaContext), trocando
+ * o VALOR das variáveis no :root em vez de sobrescrever seletor por seletor
+ * (era assim no Frontend original — ver docs/migracao-react/02-analise-frontend.md §1.5).
+ */
+
+* ,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  font-family: var(--fonte-corpo);
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background-color var(--transicao-padrao), color var(--transicao-padrao);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fonte-display);
+  color: var(--cor-texto);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Réplica de `Frontend/css/layout.css` — `.app-content` reserva a largura da
+   sidebar fixa no desktop e recua a zero quando a sidebar vira menu
+   hambúrguer (ver breakpoints de `componentes/Sidebar/Sidebar.css`). Isto
+   precisa ser uma regra CSS normal, e não um `style` inline: um `style`
+   inline nunca pode ser sobrescrito por `@media`, então a versão anterior
+   (com o recuo em `style={{marginLeft: ...}}` em `LayoutAutenticado.tsx`)
+   deixava o conteúdo sempre com 220px reservados à esquerda mesmo com a
+   sidebar escondida fora da tela no celular — quebrando a responsividade. */
+.app-content {
+  margin-left: var(--largura-sidebar);
+  padding: var(--espaco-8);
+  transition: margin-left var(--transicao-padrao);
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .app-content {
+    padding: var(--espaco-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    margin-left: 0;
+    padding: var(--espaco-4);
+    padding-top: 4.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-content {
+    padding: var(--espaco-3);
+    padding-top: 4.5rem;
+  }
+}
+
+/* Réplica de Frontend/css/layout.css — o toggle (form-switch) do Bootstrap
+   usa por padrão o azul --bs-primary; o original sempre customizou a cor
+   ligada/desligada para a paleta da marca. */
+.form-switch .form-check-input {
+  cursor: pointer;
+  background-color: var(--cor-fundo);
+  border-color: var(--cor-fundo);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--cor-primaria-rgb), 0.15);
+  border-color: var(--cor-borda);
+}
+
+.form-switch .form-check-input:checked {
+  background-color: var(--cor-primaria-hover);
+  border-color: var(--cor-primaria-hover);
+}

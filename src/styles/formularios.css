@@ -1,0 +1,56 @@
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cor-primaria-hover);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.form-control {
+  width: 100%;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 0.5rem;
+  background: #fff;
+  color: var(--cor-primaria);
+  font-size: 0.95rem;
+  padding: 0.65rem 0.85rem;
+  transition: border-color var(--transicao-padrao), box-shadow var(--transicao-padrao);
+}
+
+.form-control:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(var(--cor-primaria-rgb), 0.15);
+  outline: 0;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper .form-control {
+  padding-right: 2.5rem;
+}
+
+.input-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cor-borda);
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.input-icon.toggle-pw {
+  pointer-events: auto;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: color var(--transicao-padrao);
+}
+
+.input-icon.toggle-pw:hover {
+  color: var(--cor-primaria);
+}
