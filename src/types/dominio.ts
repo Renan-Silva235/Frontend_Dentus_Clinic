@@ -25,6 +25,8 @@ export interface Paciente {
   dataNascimento: string
   endereco?: string
   ativo: boolean
+  /** Só vem preenchida na resposta do cadastro. */
+  senhaTemporaria?: string
 }
 
 export interface Dentista {

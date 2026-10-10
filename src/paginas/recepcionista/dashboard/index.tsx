@@ -63,7 +63,8 @@ export default function DashboardRecepcionista() {
   }
 
   function Controles({ id, status }: { id: number; status: StatusUi }) {
-    if (status === 'cancelada') {
+    // Consulta encerrada é registro fechado: sem setas, o status não volta atrás.
+    if (status === 'cancelada' || status === 'consulta-encerrada') {
       return (
         <div className="status-cell">
           <span className={`status-badge ${STATUS_CLASSE[status]}`}>{STATUS_LABEL[status]}</span>
