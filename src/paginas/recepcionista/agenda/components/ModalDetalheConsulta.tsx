@@ -5,13 +5,21 @@ import type { EventoAgenda } from '../../../../componentes/CalendarioSemanal/tip
 import {
   useAtualizarStatusConsulta,
   useCancelarConsulta,
+  useConfirmarPresenca,
   useEditarConsulta,
+  useRecusarPresenca,
 } from '../../../../hooks/queries/consultas'
 import { useServicosPorEspecialidade } from '../../../../hooks/queries/servicos'
 import { formatarDataAgenda } from '../../../../utils/datasAgenda'
 import { dispararErroApi, dispararErros, dispararSucesso } from '../../../../utils/toastErros'
 import { cores } from '../../../../styles/colors'
 import type { Dentista, Paciente, Servico } from '../../../../types/dominio'
+
+const CONFIRMACAO_LABEL: Record<string, { icone: string; cor: string; texto: string }> = {
+  Pendente: { icone: 'fa-clock', cor: 'var(--cor-aviso, #b45309)', texto: 'Aguardando resposta' },
+  Confirmada: { icone: 'fa-circle-check', cor: 'var(--cor-sucesso, #15803d)', texto: 'Confirmada pelo paciente' },
+  Recusada: { icone: 'fa-circle-xmark', cor: 'var(--cor-perigo, #b91c1c)', texto: 'Recusada pelo paciente' },
+}
 
 const STATUS_LABEL: Record<string, { classe: string; texto: string }> = {
   Agendada: { classe: 'status-agendada', texto: 'Agendada' },
@@ -44,6 +52,25 @@ export function ModalDetalheConsulta({ evento, dentistas, pacientes, servicosGer
   const atualizarStatus = useAtualizarStatusConsulta()
   const cancelar = useCancelarConsulta()
   const editar = useEditarConsulta()
+  const confirmarPresenca = useConfirmarPresenca()
+  const recusarPresenca = useRecusarPresenca()
+
+  async function responderPorPaciente(resposta: 'confirmar' | 'recusar') {
+    if (!evento) return
+
+    try {
+      if (resposta === 'confirmar') {
+        await confirmarPresenca.mutateAsync(evento.id)
+        dispararSucesso('Presença confirmada.')
+      } else {
+        await recusarPresenca.mutateAsync(evento.id)
+        dispararSucesso('Consulta recusada e cancelada.')
+      }
+      fechar()
+    } catch (e) {
+      dispararErroApi(e)
+    }
+  }
 
   const dentistaEdicao = dentistas.find((d) => d.id === editDentistaId)
   const { data: servicosPorEspecialidade } = useServicosPorEspecialidade(dentistaEdicao?.idEspecialidade)
@@ -117,6 +144,7 @@ export function ModalDetalheConsulta({ evento, dentistas, pacientes, servicosGer
 
   const editavel = evento ? !['Encerrada', 'Cancelada'].includes(evento.status) : false
   const status = evento ? STATUS_LABEL[evento.status] ?? { classe: '', texto: evento.status } : null
+  const confirmacao = CONFIRMACAO_LABEL[evento?.statusConfirmacao ?? 'Pendente'] ?? CONFIRMACAO_LABEL.Pendente
 
   return (
     <Modal show={evento !== null} onHide={fechar} centered size="lg" backdrop="static">
@@ -168,7 +196,43 @@ export function ModalDetalheConsulta({ evento, dentistas, pacientes, servicosGer
                   <span className={`status-badge ${status?.classe}`}>{status?.texto}</span>
                 </span>
               </div>
+              <div className="detalhe-item">
+                <span className="detalhe-label">
+                  <i className="fa-solid fa-mobile-screen fa-fw" /> Confirmação
+                </span>
+                <span className="detalhe-valor" style={{ color: confirmacao.cor }}>
+                  <i className={`fa-solid ${confirmacao.icone} me-1`} />
+                  {confirmacao.texto}
+                </span>
+              </div>
             </div>
+            {/* O paciente responde pelo aplicativo, mas muita gente liga para a
+                clínica: aqui a recepção registra a resposta por ele. */}
+            {editavel && evento.statusConfirmacao === 'Pendente' && (
+              <div className="d-flex align-items-center gap-2 mt-3 flex-wrap">
+                <span className="text-muted small">Registrar resposta do paciente:</span>
+                <button
+                  type="button"
+                  className="btn btn-sm px-3"
+                  style={{ background: '#f0fdf4', color: '#166534', border: '1.5px solid #bbf7d0' }}
+                  onClick={() => responderPorPaciente('confirmar')}
+                  disabled={confirmarPresenca.isPending || recusarPresenca.isPending}
+                >
+                  <i className="fa-solid fa-circle-check me-1" />
+                  Confirmou
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm px-3"
+                  style={{ background: 'var(--cor-perigo-fundo)', color: 'var(--cor-perigo)', border: '1.5px solid #fca5a5' }}
+                  onClick={() => responderPorPaciente('recusar')}
+                  disabled={confirmarPresenca.isPending || recusarPresenca.isPending}
+                >
+                  <i className="fa-solid fa-circle-xmark me-1" />
+                  Recusou
+                </button>
+              </div>
+            )}
             {evento.retorno && (
               <div className="mt-2">
                 <span className="badge-retorno">

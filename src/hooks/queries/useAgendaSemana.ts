@@ -18,6 +18,10 @@ export function useAgendaSemana(dentistaId: number | undefined, monday: Date) {
       queryKey: ['consultas', 'agenda', dentistaId, data],
       queryFn: () => consultasService.agenda(dentistaId as number, data),
       enabled: dentistaId !== undefined,
+      // A confirmação do paciente chega pelo aplicativo, sem passar por esta
+      // tela: sem recarregar sozinha, a recepção só veria ao atualizar a página.
+      refetchInterval: 15000,
+      refetchOnWindowFocus: true,
     })),
   })
 
@@ -36,6 +40,7 @@ export function useAgendaSemana(dentistaId: number | undefined, monday: Date) {
           nomePaciente: c.nomePaciente,
           nomeServico: c.nomeServico || '—',
           status: c.status,
+          statusConfirmacao: c.statusConfirmacao ?? 'Pendente',
           idPaciente: c.idPaciente,
           idDentista: c.idDentista,
           nomeDentista: c.nomeDentista,

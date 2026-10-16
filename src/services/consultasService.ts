@@ -24,6 +24,10 @@ export const consultasService = {
   atualizarStatus: (id: number, status: StatusConsulta) =>
     httpClient.put<Consulta>(`/consultas/${id}/status`, { status }),
   registrarChegada: (id: number) => httpClient.put<Consulta>(`/consultas/${id}/chegada`),
+  // Mesma ação que o paciente faz pelo aplicativo, disponível ao funcionário
+  // para quando a resposta chega por telefone ou na recepção.
+  confirmarPresenca: (id: number) => httpClient.post<void>(`/consultas/${id}/confirmar`),
+  recusarPresenca: (id: number) => httpClient.post<void>(`/consultas/${id}/recusar`),
   cancelar: (id: number) => httpClient.put<Consulta>(`/consultas/${id}/cancelar`),
   inativar: (id: number) => httpClient.put<Consulta>(`/consultas/${id}/inativar`),
 }
