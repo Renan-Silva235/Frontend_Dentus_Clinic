@@ -7,7 +7,7 @@ export interface ConsultaRequest {
   retorno?: boolean
   idDentista: number
   idPaciente: number
-  idServico?: number
+  idServico: number
 }
 
 export type ConsultaUpdateRequest = Partial<ConsultaRequest>
