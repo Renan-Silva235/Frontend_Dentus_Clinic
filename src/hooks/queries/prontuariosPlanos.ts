@@ -43,11 +43,3 @@ export function useCadastrarPlano() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['prontuario-planos'] }),
   })
 }
-
-export function useEditarPlano() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, dados }: { id: number; dados: PlanoRequest }) => planosService.editar(id, dados),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['prontuario-planos'] }),
-  })
-}

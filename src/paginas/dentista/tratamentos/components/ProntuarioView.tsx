@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Odontograma } from '../../../../componentes/Odontograma/Odontograma'
-import { useProntuarioEPlanos, useEditarPlano } from '../../../../hooks/queries/prontuariosPlanos'
+import { useProntuarioEPlanos } from '../../../../hooks/queries/prontuariosPlanos'
 import { mascararCpf, mascararTelefone, formatarDataBr } from '../../../../utils/formatadores'
-import { dispararErroApi, dispararSucesso } from '../../../../utils/toastErros'
 import type { Consulta, Paciente, Plano, Prontuario } from '../../../../types/dominio'
 
 interface Props {
@@ -31,68 +30,17 @@ function dentesDoPlano(plano: Plano | undefined): Set<number> {
 
 export default function ProntuarioView({ pacienteId, pacienteNome, paciente, consultasDoPaciente, dentistaNome, onVoltar }: Props) {
   const { data, isLoading } = useProntuarioEPlanos(pacienteId ?? undefined)
-  const editarPlano = useEditarPlano()
 
   const prontuario = data?.prontuario ?? null
   const planos = data?.planos ?? []
 
   const [indiceSelecionado, setIndiceSelecionado] = useState(0)
-  const [editando, setEditando] = useState(false)
-  const [editCondicao, setEditCondicao] = useState('')
-  const [editDescricao, setEditDescricao] = useState('')
-  const [editObservacao, setEditObservacao] = useState('')
-  const [editDentes, setEditDentes] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     setIndiceSelecionado(0)
-    setEditando(false)
   }, [pacienteId])
 
   const planoAtual = planos[indiceSelecionado]
-
-  function iniciarEdicao() {
-    if (!planoAtual) return
-    setEditCondicao(planoAtual.condicao || '')
-    setEditDescricao(planoAtual.descricao || '')
-    setEditObservacao(planoAtual.observacao || '')
-    setEditDentes(dentesDoPlano(planoAtual))
-    setEditando(true)
-  }
-
-  function cancelarEdicao() {
-    setEditando(false)
-  }
-
-  function alternarDenteEdicao(numero: number) {
-    setEditDentes((atual) => {
-      const novo = new Set(atual)
-      if (novo.has(numero)) novo.delete(numero)
-      else novo.add(numero)
-      return novo
-    })
-  }
-
-  async function salvarEdicao() {
-    if (!planoAtual) return
-    try {
-      await editarPlano.mutateAsync({
-        id: planoAtual.id,
-        dados: {
-          idProntuario: planoAtual.idProntuario,
-          idServico: planoAtual.idServico ?? undefined,
-          condicao: editCondicao.trim() || undefined,
-          descricao: editDescricao.trim() || undefined,
-          observacao: editObservacao.trim() || undefined,
-          dente: editDentes.size ? [...editDentes].join(',') : undefined,
-          status: planoAtual.status || 'Concluido',
-        },
-      })
-      dispararSucesso('Plano atualizado com sucesso.')
-      setEditando(false)
-    } catch (e) {
-      dispararErroApi(e)
-    }
-  }
 
   const consultasAgendadas = useMemo(() => {
     const hoje = new Date().toISOString().split('T')[0]
@@ -101,7 +49,6 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
       .sort((a, b) => `${a.dataConsulta}T${a.horaConsulta}`.localeCompare(`${b.dataConsulta}T${b.horaConsulta}`))
   }, [consultasDoPaciente])
 
-  const dentesExibidos = editando ? editDentes : dentesDoPlano(planoAtual)
 
   return (
     <div className="prontuario-view">
@@ -147,18 +94,12 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
                 <div className="prontuario-odontograma mb-3">
                   <h4 className="prontuario-sub-titulo fw-bold mb-2">
                     Odontograma
-                    {editando && (
-                      <small style={{ fontSize: '0.72rem', fontWeight: 400, color: '#6366f1', marginLeft: '0.4rem' }}>
-                        — clique para selecionar/desmarcar
-                      </small>
-                    )}
                   </h4>
                   <Odontograma
                     prefixo="dente-prontuario"
                     classeAtiva="tratado-consulta"
-                    numerosSelecionados={dentesExibidos}
-                    somenteLeitura={!editando}
-                    onToggle={alternarDenteEdicao}
+                    numerosSelecionados={dentesDoPlano(planoAtual)}
+                    somenteLeitura
                   />
                   <div className="odontograma-legenda">
                     <span className="legenda-item d-flex align-items-center gap-1 small">
@@ -171,47 +112,17 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
                   <div className="prontuario-detalhes-esq col-12 col-md-7">
                     <div className="prontuario-campo mb-3">
                       <label className="prontuario-campo-label form-label small fw-semibold mb-1">Condição</label>
-                      {editando ? (
-                        <input
-                          type="text"
-                          className="form-control"
-                          style={{ fontSize: '0.88rem' }}
-                          value={editCondicao}
-                          onChange={(e) => setEditCondicao(e.target.value)}
-                        />
-                      ) : (
-                        <div className="prontuario-campo-valor">{planoAtual?.condicao || '—'}</div>
-                      )}
+                      <div className="prontuario-campo-valor">{planoAtual?.condicao || '—'}</div>
                     </div>
                     <div className="prontuario-campo">
                       <label className="prontuario-campo-label form-label small fw-semibold mb-1">Planejamento do Tratamento</label>
-                      {editando ? (
-                        <textarea
-                          className="form-control"
-                          rows={4}
-                          style={{ fontSize: '0.88rem' }}
-                          value={editDescricao}
-                          onChange={(e) => setEditDescricao(e.target.value)}
-                        />
-                      ) : (
-                        <div className="prontuario-campo-textarea">{planoAtual?.descricao || '—'}</div>
-                      )}
+                      <div className="prontuario-campo-textarea">{planoAtual?.descricao || '—'}</div>
                     </div>
                   </div>
                   <div className="prontuario-detalhes-dir col-12 col-md-5">
                     <div className="prontuario-obs-card rounded p-3 h-100 d-flex flex-column">
                       <h4 className="prontuario-obs-titulo fw-bold mb-2">Procedimento Realizado</h4>
-                      {editando ? (
-                        <textarea
-                          className="form-control"
-                          rows={5}
-                          style={{ fontSize: '0.88rem' }}
-                          value={editObservacao}
-                          onChange={(e) => setEditObservacao(e.target.value)}
-                        />
-                      ) : (
-                        <div className="prontuario-obs-texto small flex-grow-1">{planoAtual?.observacao || '—'}</div>
-                      )}
+                      <div className="prontuario-obs-texto small flex-grow-1">{planoAtual?.observacao || '—'}</div>
                     </div>
                   </div>
                 </div>
@@ -221,39 +132,6 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
                   <span className="prontuario-dentista-nome">{dentistaNome}</span>
                 </div>
 
-                <div className="prontuario-editar-acao d-flex" style={{ marginTop: '1rem', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  {!editando ? (
-                    <button
-                      className="btn btn-sm px-3"
-                      style={{ background: '#eef2ff', color: '#3730a3', border: '1.5px solid #c7d2fe', borderRadius: 8, fontSize: '0.82rem' }}
-                      onClick={iniciarEdicao}
-                    >
-                      <i className="fa-solid fa-pen-to-square me-1" />
-                      Editar este registro
-                    </button>
-                  ) : (
-                    <div className="d-flex" style={{ gap: '0.5rem' }}>
-                      <button
-                        className="btn btn-sm px-3"
-                        style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.82rem' }}
-                        onClick={cancelarEdicao}
-                        disabled={editarPlano.isPending}
-                      >
-                        <i className="fa-solid fa-xmark me-1" />
-                        Cancelar
-                      </button>
-                      <button
-                        className="btn btn-sm px-3 text-white"
-                        style={{ backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderRadius: 8, fontSize: '0.82rem' }}
-                        onClick={salvarEdicao}
-                        disabled={editarPlano.isPending}
-                      >
-                        <i className="fa-solid fa-floppy-disk me-1" />
-                        {editarPlano.isPending ? 'Salvando…' : 'Salvar e Atualizar Data'}
-                      </button>
-                    </div>
-                  )}
-                </div>
               </>
             )}
           </div>
@@ -317,8 +195,7 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
                         className={`plano-row ${i === indiceSelecionado ? 'selected' : ''}`}
                         onClick={() => {
                           setIndiceSelecionado(i)
-                          setEditando(false)
-                        }}
+                                              }}
                       >
                         <td>{resolverDataPlano(p, prontuario)}</td>
                         <td>{p.nomeServico || '—'}</td>

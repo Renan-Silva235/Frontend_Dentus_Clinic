@@ -4,7 +4,6 @@ import { prontuariosService } from '../../../../services/prontuariosService'
 import { planosService } from '../../../../services/planosService'
 import { consultasService } from '../../../../services/consultasService'
 import { dispararSucesso } from '../../../../utils/toastErros'
-import type { Plano } from '../../../../types/dominio'
 
 export interface PendingObservacoes {
   condicao: string | null
@@ -37,9 +36,6 @@ export default function FinalizarView({
   onFinalizado,
 }: Props) {
   const [carregando, setCarregando] = useState(false)
-  const [mostrarEscolha, setMostrarEscolha] = useState(false)
-  const [prontuarioId, setProntuarioId] = useState<number | null>(null)
-  const [planoMaisRecente, setPlanoMaisRecente] = useState<Plano | null>(null)
 
   async function concluirFinalizacao() {
     if (consultaId) {
@@ -62,17 +58,10 @@ export default function FinalizarView({
     setCarregando(true)
     try {
       const prontuario = await prontuariosService.obterOuCriar(idPaciente)
-      setProntuarioId(prontuario.id)
 
-      const existentes = (await planosService.listarPorProntuario(prontuario.id)).sort((a, b) => b.id - a.id)
-
-      if (existentes.length > 0) {
-        setPlanoMaisRecente(existentes[0])
-        setMostrarEscolha(true)
-        setCarregando(false)
-        return
-      }
-
+      // Cada finalização gera o seu próprio registro no prontuário. Não existe
+      // opção de alterar um registro anterior: prontuário é documento clínico,
+      // e o que já foi registrado não se mexe.
       await planosService.cadastrar({
         idProntuario: prontuario.id,
         idServico,
@@ -88,44 +77,6 @@ export default function FinalizarView({
     } finally {
       setCarregando(false)
     }
-  }
-
-  async function atualizarUltimoRegistro() {
-    if (planoMaisRecente) {
-      try {
-        await planosService.editar(planoMaisRecente.id, {
-          idProntuario: planoMaisRecente.idProntuario,
-          idServico: idServico ?? planoMaisRecente.idServico ?? undefined,
-          condicao: pendingObservacoes.condicao || planoMaisRecente.condicao || undefined,
-          descricao: pendingObservacoes.descricao || planoMaisRecente.descricao || undefined,
-          observacao: pendingObservacoes.observacao || planoMaisRecente.observacao || undefined,
-          dente: pendingObservacoes.dente || planoMaisRecente.dente || undefined,
-          status: 'Concluido',
-        })
-      } catch {
-        // segue mesmo em caso de erro — mesmo comportamento do original
-      }
-    }
-    await concluirFinalizacao()
-  }
-
-  async function criarNovoRegistro() {
-    if (prontuarioId) {
-      try {
-        await planosService.cadastrar({
-          idProntuario: prontuarioId,
-          idServico,
-          condicao: pendingObservacoes.condicao ?? undefined,
-          descricao: pendingObservacoes.descricao ?? undefined,
-          observacao: pendingObservacoes.observacao ?? undefined,
-          dente: pendingObservacoes.dente ?? undefined,
-          status: 'Concluido',
-        })
-      } catch {
-        // segue mesmo em caso de erro — mesmo comportamento do original
-      }
-    }
-    await concluirFinalizacao()
   }
 
   return (
@@ -238,53 +189,15 @@ export default function FinalizarView({
           <i className="fa-solid fa-circle-info fa-xs" />
           Observações serão adicionadas ao prontuário
         </div>
-        {!mostrarEscolha && (
-          <button
-            className="btn-confirmar-finalizar btn btn-sm btn-success"
-            onClick={confirmarFinalizacao}
-            disabled={carregando}
-          >
-            <i className="fa-solid fa-check" /> {carregando ? 'Aguarde…' : 'Confirmar Finalização'}
-          </button>
-        )}
+        <button
+          className="btn-confirmar-finalizar btn btn-sm btn-success"
+          onClick={confirmarFinalizacao}
+          disabled={carregando}
+        >
+          <i className="fa-solid fa-check" /> {carregando ? 'Aguarde…' : 'Confirmar Finalização'}
+        </button>
       </div>
 
-      {mostrarEscolha && (
-        <div
-          style={{
-            display: 'flex',
-            padding: '1rem 1.5rem',
-            background: '#f0f4ff',
-            borderTop: '1px solid #c7d2fe',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}
-        >
-          <span style={{ flex: 1, minWidth: 200, fontSize: '0.88rem', color: '#374151' }}>
-            <i className="fa-solid fa-file-circle-question me-1" style={{ color: '#6366f1' }} />
-            Este paciente já possui registros no prontuário. O que deseja fazer?
-          </span>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <button
-              className="btn btn-sm px-3"
-              style={{ background: '#eef2ff', color: '#3730a3', border: '1.5px solid #c7d2fe', borderRadius: 8, fontSize: '0.82rem' }}
-              onClick={atualizarUltimoRegistro}
-            >
-              <i className="fa-solid fa-pen-to-square me-1" />
-              Atualizar último registro
-            </button>
-            <button
-              className="btn btn-sm px-3"
-              style={{ background: '#f0fdf4', color: '#166534', border: '1.5px solid #bbf7d0', borderRadius: 8, fontSize: '0.82rem' }}
-              onClick={criarNovoRegistro}
-            >
-              <i className="fa-solid fa-plus me-1" />
-              Criar novo registro
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

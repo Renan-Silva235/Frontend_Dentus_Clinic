@@ -1,11 +1,12 @@
 import { cores } from '../../styles/colors'
-import type { StatusConsulta } from '../../types/dominio'
+import type { StatusConfirmacao, StatusConsulta } from '../../types/dominio'
 
 export interface EventoAgenda {
   id: number
   nomePaciente: string
   nomeServico: string
   status: StatusConsulta
+  statusConfirmacao: StatusConfirmacao
   idPaciente: number
   idDentista: number
   nomeDentista: string

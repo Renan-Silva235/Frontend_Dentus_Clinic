@@ -17,7 +17,8 @@ export function useConsultasHoje() {
   return useQuery({
     queryKey: ['consultas', 'hoje'],
     queryFn: consultasService.listarHoje,
-    refetchInterval: 30000,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   })
 }
 
@@ -26,6 +27,8 @@ export function useAgendaDentista(dentistaId: number | undefined, data: string) 
     queryKey: ['consultas', 'agenda', dentistaId, data],
     queryFn: () => consultasService.agenda(dentistaId as number, data),
     enabled: dentistaId !== undefined,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   })
 }
 
@@ -51,6 +54,22 @@ export function useAtualizarStatusConsulta() {
   return useMutation({
     mutationFn: ({ id, status }: { id: number; status: StatusConsulta }) =>
       consultasService.atualizarStatus(id, status),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['consultas'] }),
+  })
+}
+
+export function useConfirmarPresenca() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => consultasService.confirmarPresenca(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['consultas'] }),
+  })
+}
+
+export function useRecusarPresenca() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => consultasService.recusarPresenca(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['consultas'] }),
   })
 }

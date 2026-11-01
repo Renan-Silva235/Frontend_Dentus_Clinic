@@ -12,7 +12,6 @@ export type StatusConsulta =
   | 'Aguardando'
   | 'Em Consulta'
   | 'Encerrada'
-  | 'Concluida'
   | 'Cancelada'
   | 'Inativa'
 
@@ -61,12 +60,16 @@ export interface Servico {
   idEspecialidade?: number
 }
 
+/** Resposta do paciente ao aviso enviado 24h antes da consulta. */
+export type StatusConfirmacao = 'Pendente' | 'Confirmada' | 'Recusada'
+
 export interface Consulta {
   id: number
   dataConsulta: string
   horaConsulta: string
   retorno: boolean
   status: StatusConsulta
+  statusConfirmacao: StatusConfirmacao
   idDentista: number
   idPaciente: number
   idServico?: number

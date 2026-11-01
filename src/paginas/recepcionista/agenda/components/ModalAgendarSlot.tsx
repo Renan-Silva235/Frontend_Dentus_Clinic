@@ -52,6 +52,11 @@ export function ModalAgendarSlot({ slot, dentistas, pacientes, servicosGerais, o
       return
     }
 
+    if (!servicoId) {
+      dispararErros('Selecione um serviço.')
+      return
+    }
+
     const agora = new Date()
     const hoje = agora.toISOString().slice(0, 10)
     const horaAtual = agora.toTimeString().slice(0, 5)
@@ -71,7 +76,7 @@ export function ModalAgendarSlot({ slot, dentistas, pacientes, servicosGerais, o
         idDentista: slot.dentistaId,
         dataConsulta: slot.data,
         horaConsulta: `${slot.hora}:00`,
-        idServico: servicoId ? Number(servicoId) : undefined,
+        idServico: Number(servicoId),
         retorno,
       })
       dispararSucesso('Consulta agendada com sucesso.')
@@ -117,9 +122,11 @@ export function ModalAgendarSlot({ slot, dentistas, pacientes, servicosGerais, o
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-semibold">Serviço</label>
+          <label className="form-label fw-semibold">
+            Serviço <span className="text-danger">*</span>
+          </label>
           <select className="form-select" value={servicoId} onChange={(e) => setServicoId(e.target.value)}>
-            <option value="">Nenhum</option>
+            <option value="">Selecione...</option>
             {servicos.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.nome}

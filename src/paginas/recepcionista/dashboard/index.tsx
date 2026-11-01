@@ -22,6 +22,25 @@ const STATUS_UI_PARA_DB: Record<string, StatusConsulta> = {
 
 const STATUS_ORDEM: StatusUi[] = ['agendada', 'em-fila', 'em-consulta', 'consulta-encerrada']
 
+const CONFIRMACAO: Record<string, { icone: string; cor: string; titulo: string }> = {
+  Pendente: { icone: 'fa-clock', cor: '#b45309', titulo: 'Paciente ainda não respondeu' },
+  Confirmada: { icone: 'fa-circle-check', cor: '#15803d', titulo: 'Confirmada pelo paciente' },
+  Recusada: { icone: 'fa-circle-xmark', cor: '#b91c1c', titulo: 'Recusada pelo paciente' },
+}
+
+/** Resposta do paciente ao aviso enviado pelo aplicativo. */
+function IconeConfirmacao({ confirmacao }: { confirmacao: string }) {
+  const info = CONFIRMACAO[confirmacao] ?? CONFIRMACAO.Pendente
+  return (
+    <i
+      className={`fa-solid ${info.icone} ms-2`}
+      style={{ color: info.cor }}
+      title={info.titulo}
+      aria-label={info.titulo}
+    />
+  )
+}
+
 const STATUS_LABEL: Record<StatusUi, string> = {
   agendada: 'Agendada',
   'em-fila': 'Em Fila',
@@ -51,6 +70,7 @@ export default function DashboardRecepcionista() {
     servico: c.nomeServico || '—',
     retorno: c.retorno || false,
     status: STATUS_DB_PARA_UI[c.status] || 'agendada',
+    confirmacao: c.statusConfirmacao ?? 'Pendente',
   }))
 
   function mudarStatus(id: number, statusAtual: StatusUi, direcao: 1 | -1) {
@@ -135,6 +155,7 @@ export default function DashboardRecepcionista() {
                   <tr key={c.id}>
                     <td>
                       {c.paciente}
+                      <IconeConfirmacao confirmacao={c.confirmacao} />
                       {c.retorno && <span className="badge-retorno">Retorno</span>}
                     </td>
                     <td>{c.hora}</td>
@@ -164,7 +185,10 @@ export default function DashboardRecepcionista() {
                 <span className="cons-hora">{c.hora}</span>
                 {c.retorno && <span className="badge-retorno">Retorno</span>}
               </div>
-              <div className="cons-card-nome">{c.paciente}</div>
+              <div className="cons-card-nome">
+                {c.paciente}
+                <IconeConfirmacao confirmacao={c.confirmacao} />
+              </div>
               <div className="cons-card-meta">
                 <span>
                   <i className="fa-solid fa-user-doctor" />
