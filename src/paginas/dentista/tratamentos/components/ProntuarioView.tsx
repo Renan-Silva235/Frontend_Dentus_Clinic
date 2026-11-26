@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Odontograma } from '../../../../componentes/Odontograma/Odontograma'
 import { useProntuarioEPlanos } from '../../../../hooks/queries/prontuariosPlanos'
 import { mascararCpf, mascararTelefone, formatarDataBr } from '../../../../utils/formatadores'
+import { toISODate } from '../../../../utils/datasAgenda'
 import type { Consulta, Paciente, Plano, Prontuario } from '../../../../types/dominio'
 
 interface Props {
@@ -43,7 +44,7 @@ export default function ProntuarioView({ pacienteId, pacienteNome, paciente, con
   const planoAtual = planos[indiceSelecionado]
 
   const consultasAgendadas = useMemo(() => {
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = toISODate(new Date())
     return consultasDoPaciente
       .filter((c) => c.dataConsulta >= hoje)
       .sort((a, b) => `${a.dataConsulta}T${a.horaConsulta}`.localeCompare(`${b.dataConsulta}T${b.horaConsulta}`))

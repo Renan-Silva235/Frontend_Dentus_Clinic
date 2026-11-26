@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap'
 import { AutocompletePaciente } from '../../../../componentes/AutocompletePaciente/AutocompletePaciente'
 import { useAgendarConsulta } from '../../../../hooks/queries/consultas'
 import { useServicosPorEspecialidade } from '../../../../hooks/queries/servicos'
-import { formatarDataAgenda } from '../../../../utils/datasAgenda'
+import { formatarDataAgenda, toISODate } from '../../../../utils/datasAgenda'
 import { dispararErroApi, dispararErros, dispararSucesso } from '../../../../utils/toastErros'
 import type { Paciente, Servico } from '../../../../types/dominio'
 import type { Dentista } from '../../../../types/dominio'
@@ -58,7 +58,7 @@ export function ModalAgendarSlot({ slot, dentistas, pacientes, servicosGerais, o
     }
 
     const agora = new Date()
-    const hoje = agora.toISOString().slice(0, 10)
+    const hoje = toISODate(agora)
     const horaAtual = agora.toTimeString().slice(0, 5)
 
     if (slot.data < hoje) {
